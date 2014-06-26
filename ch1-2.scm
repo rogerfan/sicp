@@ -136,12 +136,13 @@
 ;; Ex 1.19
 (define (fib n)
   (define (fib-iter a b p q count)
+    (define (square x) (* x x))
     (cond ((= count 0) b)
           ((even? count)
            (fib-iter a
                      b
-                     ??  ; compute p'
-                     ??  ; compute q'
+                     (+ (square p) (square q))  ; compute p'
+                     (+ (* 2 p q) (square q))  ; compute q'
                      (/ count 2)))
           (else (fib-iter (+ (* b q) (* a q) (* a p))
                           (+ (* b p) (* a q))
