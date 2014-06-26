@@ -120,5 +120,32 @@
   (define (double x) (* x 2))
   (define (halve x) (/ x 2))
   (cond ((= b 0) 0)
-        ((even? b) (fast-times (double a) (/ b 2)))
+        ((even? b) (fast-times (double a) (halve b)))
         (else (+ a (fast-times a (- b 1))))))
+
+;; Ex 1.18
+(define (fast-times a b)
+  (define (ft-iter a b x)
+    (define (double x) (* x 2))
+    (define (halve x) (/ x 2))
+    (cond ((= b 0) x)
+          ((even? b) (ft-iter (double a) (halve b) x))
+          (else (ft-iter a (- b 1) (+ x a)))))
+  (ft-iter a b 0))
+
+;; Ex 1.19
+(define (fib n)
+  (define (fib-iter a b p q count)
+    (cond ((= count 0) b)
+          ((even? count)
+           (fib-iter a
+                     b
+                     ??  ; compute p'
+                     ??  ; compute q'
+                     (/ count 2)))
+          (else (fib-iter (+ (* b q) (* a q) (* a p))
+                          (+ (* b p) (* a q))
+                          p
+                          q
+                          (- count 1)))))
+  (fib-iter 1 0 0 1 n))
