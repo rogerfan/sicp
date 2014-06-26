@@ -102,3 +102,23 @@
   (cond ((= n 0) 1)
         ((even? n) (square (fast-expt b (/ n 2))))
         (else (* b (fast-expt b (- n 1))))))
+
+;; Ex 1.16
+(define (fast-expt b n)
+  (define (fe-iter b n a)
+    (cond ((= n 0) a)
+          ((even? n) (fe-iter (square b) (/ n 2) a))
+          (else (fe-iter b (- n 1) (* a b)))))
+  (fe-iter b n 1))
+
+;; Ex 1.17
+(define (times a b)
+  (cond ((= b 0) 0)
+        (else (+ a (times a (- b 1))))))
+
+(define (fast-times a b)
+  (define (double x) (* x 2))
+  (define (halve x) (/ x 2))
+  (cond ((= b 0) 0)
+        ((even? b) (fast-times (double a) (/ b 2)))
+        (else (+ a (fast-times a (- b 1))))))
