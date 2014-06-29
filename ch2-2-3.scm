@@ -72,3 +72,70 @@
   (accum (lambda (new count) (+ count 1))
           0
           sequence))
+
+;; Ex 2.35
+(define (count-leaves tree)
+  (define (enum-tree tree)
+    (cond ((null? tree) nil)
+          ((not (pair? tree)) (list tree))
+          (else (append (enum-tree (car tree))
+                        (enum-tree (cdr tree))))))
+  (accum (lambda (new count) (+ count 1))
+         0
+         (enum-tree tree)))
+
+(define (count-leaves tree)
+  (accum +
+         0
+         (map (lambda (node)
+                (if (pair? node)
+                    (count-leaves node)
+                    1))
+              tree)))
+
+;; Ex 2.36
+(define testseqs (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
+
+; This one does it in the wrong dimension, accumulating each seq rather than
+; the nth element of each seq
+(define (accum-n op init seqs)
+  (map (lambda (seq)
+         (accum op init seq))
+       seqs))
+
+; This is how the problem is worded
+(define (accum-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accum op init (map car seqs))
+            (accum-n op init (map cdr seqs)))))
+
+;; Ex 2.37
+(define v1 (list 1 3 5))
+(define v2 (list 3 6 3))
+(define m1 (list (list 1 2 3) (list 2 3 4)))
+(define m2 (list (list 1 2) (list 2 3) (list 3 4)))
+
+(define (dot-prod v w)
+  (accum + 0 (map * v w)))
+(define (m*v m v)
+  (map (lambda (row) (dot-prod row v)) m))
+(define (transpose m)
+  (accum-n cons nil m))
+(define (m*m m1 m2)
+  (let ((n-cols (transpose m2)))
+    (map (lambda (row) (m*v n-cols row))
+         m1)))
+
+;; Nested Mappings
+(define (permutations s)
+  (if (null? s)                    ; empty set?
+      (list nil)                   ; sequence containing empty set
+      (flatmap (lambda (x)
+                 (map (lambda (p) (cons x p))
+                      (permutations (remove x s))))
+               s)))
+
+(define (remove item sequence)
+  (filter (lambda (x) (not (= x item)))
+          sequence))
