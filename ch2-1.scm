@@ -38,3 +38,63 @@
 (define (equal-rat? x y)
   (= (* (numer x) (denom y))
      (* (numer y) (denom x))))
+
+;; Ex 2.2
+(define (make-seg p1 p2)
+  (cons p1 p2))
+(define (seg-start seg)
+  (car seg))
+(define (seg-end seg)
+  (cdr seg))
+(define (seg-mid seg)
+  (define (avg x y)
+    (/ (+ x y) 2))
+  (define (avg-coord which-point seg)
+    (avg (which-point (seg-start seg))
+         (which-point (seg-end seg))))
+  (make-point (avg-coord point-x seg)
+              (avg-coord point-y seg)))
+(define (print-seg seg)
+  (print-point (seg-start seg))
+  (display " - ")
+  (print-point (seg-end seg)))
+
+(define (make-point x y)
+  (cons x y))
+(define (point-x point)
+  (car point))
+(define (point-y point)
+  (cdr point))
+
+(define (print-point p)
+  (display "(")
+  (display (point-x p))
+  (display ",")
+  (display (point-y p))
+  (display ")"))
+
+(define testseg (make-seg (make-point 2 3) (make-point 1 5)))
+(print-seg testseg)
+(print-point (seg-mid testseg))
+
+;; 2.1.3
+(define (cons-alt x y)
+  (lambda (m)
+    (cond ((= m 0) x)
+          ((= m 1) y)
+          (else (error "Arg must be 0 or 1 -- CONS" m)))))
+(define (car-alt z) (z 0))
+(define (cdr-alt z) (z 1))
+
+;; Ex 2.6
+(define zero (lambda (f) (lambda (x) x)))
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+
+(define one (lambda (f) (lambda (x) (f x))))
+(define two (lambda (f) (lambda (x) (f (f x)))))
+
+(define (add a b)
+  (lambda (f)
+    (lambda (x)
+      ((a f) ((b f) x)))))
