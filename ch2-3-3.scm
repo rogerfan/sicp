@@ -4,6 +4,7 @@
         ((list? l1) (and (equal? (car l1) (car l2))
                          (equal? (cdr l1) (cdr l2))))))
 
+
 ;; Sets as unordered lists
 (define (element-of-set? x set)
   (cond ((null? set) #f)
@@ -22,7 +23,7 @@
                (intersection-set (cdr set1) set2)))
         (else (intersection-set (cdr set1) set2))))
 
-; Ex 2.59 - Define union-set
+; Ex 2.59
 (define (union-set set1 set2)
   (cond ((null? set1) set2)
         ((null? set2) set1)
@@ -31,7 +32,7 @@
         (else (cons (car set1)
                     (union-set (cdr set1) set2)))))
 
-; Alternate
+; Ex 2.59 - Alternate
 (define (accumulate op initial sequence)
    (if (null? sequence)
        initial
@@ -42,3 +43,43 @@
               set2
               (filter (lambda (x) (not (element-of-set? x set2)))
                       set1)))
+
+
+;; Sets as ordered lists
+(define (element-of-set? x set)
+  (cond ((null? set) #f)
+        ((= x (car set)) #t)
+        ((< x (car set)) #f)
+        (else (element-of-set? x (cdr set)))))
+
+(define (intersection-set set1 set2)
+  (if (or (null? set1) (null? set2))
+      '()
+      (let ((x1 (car set1)) (x2 (car set2)))
+        (cond ((= x1 x2)
+               (cons x1
+                     (intersection-set (cdr set1) (cdr set2))))
+              ((< x1 x2)
+               (intersection-set (cdr set1) set2))
+              ((> x1 x2)
+               (intersection-set set1 (cdr set2)))))))
+
+; Ex 2.61
+(define (adjoin-set x set)
+  (cond ((null? set) (list x))
+        ((= x (car set)) set)
+        ((> x (car set))
+         (cons (car set)
+               (adjoin-set x (cdr set))))
+        ((< x (car set))
+         (cons x set))))
+
+; Ex 2.62
+(define (union-set set1 set2)
+  (cond ((null? set1) set2)
+        ((null? set2) set1)
+        (else
+         (let ((x1 (car set1)) (x2 (car set2)))
+           (cond ((= x1 x2) (cons x1 (union-set (cdr set1) (cdr set2))))
+                 ((< x1 x2) (cons x1 (union-set (cdr set1) set2)))
+                 ((> x1 x2) (cons x2 (union-set set1 (cdr set2))))))))
