@@ -1,6 +1,5 @@
 
 ;; 2.3.4 - Huffman Encoding Trees
-
 (define (make-leaf symbol weight)
   (list 'leaf symbol weight))
 (define (leaf? object)
@@ -54,3 +53,28 @@
         (adjoin-set (make-leaf (car pair)
                                (cadr pair))
                     (make-leaf-set (cdr pairs))))))
+
+;; Ex 2.68
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+(define (symbol-in-set? symbol set)
+  (cond ((null? set) #f)
+        ((eq? symbol (car set)) #t)
+        (else (symbol-in-set? symbol (cdr set)))))
+
+(define (symbol-in-branch? symbol tree)
+  (symbol-in-set? symbol (symbols tree)))
+
+(define (encode-symbol symbol tree)
+  (cond ((leaf? tree) '())
+        ((symbol-in-branch? symbol (left-branch tree))
+         (append (list 0)
+                 (encode-symbol symbol (left-branch tree))))
+        ((symbol-in-branch? symbol (right-branch tree))
+         (append (list 1)
+                 (encode-symbol symbol (right-branch tree))))
+        (else (raise (list "Symbol not in tree -- ENCODE-SYMBOL" symbol)))))
